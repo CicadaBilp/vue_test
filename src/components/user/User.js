@@ -58,6 +58,16 @@ export default {
           message:'格式不正确',
           trigger:'blur'
         }
+      },
+      value1:true,
+      //用于决定编辑用户对话框是否显示
+      dialogEditUserVisible:false,
+      //编辑用户信息的表单组件绑定的数据(对象)
+      editUserForm:{
+        username:'大春哥',
+        email:'',
+        mobile:'',
+        id:0
       }
     };
   },
@@ -74,9 +84,6 @@ export default {
           query,
           pagenum,
           pagesize: 2,
-        },
-        headers: {
-          Authorization: localStorage.getItem("token"),
         },
       }
       let res = await axios.get(url,config)
@@ -106,17 +113,7 @@ export default {
     //点击确定,发送请求添加用户
     async addUser(){
       const url = 'http://localhost:8888/api/private/v1/users'
-      const config = {
-        headers:{
-          Authorization:localStorage.getItem('token')
-        }
-      }
-      let res = await axios.post(url,this.addUserForm,config)
-      // axios.post('http://localhost:8888/api/private/v1/users',this.addUserForm,{
-      //   headers:{
-      //     Authorization:localStorage.getItem('token')
-      //   }
-      // })
+      let res = await axios.post(url,this.addUserForm)
       if(res.data.meta.status === 201){
         //隐藏对话框
         this.dialogAddUserVisible =false
@@ -129,20 +126,92 @@ export default {
         //刷新用户信息
         this.getUserData()
       }  
-      // .then(res=>{
-      //   if(res.data.meta.status === 201){
-      //     //隐藏对话框
-      //     this.dialogAddUserVisible =false
-      //     //提示信息
-      //     this.$message({
-      //       message:'添加用户成功',
-      //       type:'success',
-      //       duration:800
-      //     })
-      //     //刷新用户信息
-      //     this.getUserData()
-      //   }  
-      // })
+    },
+    //点击删除按钮,进行删除用户
+    async delUser(row){
+      try {
+        //获取到传递的当前行数据对象
+        const id = row.id
+        //这个点击的操作当点击确定就正常,当点取消会出现异常
+        await this.$confirm("此操作将删除当前用户, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: true,
+        })
+        //确定删除,要发送请求进行删除
+        let res = await axios.delete(`http://localhost:8888/api/private/v1/users/${id}`)
+        //console.log(res);
+        //判断返回的res是否删除成功
+        if(res.data.meta.status === 200){
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            duration: 800,
+          })
+          //更新用户列表页
+          this.getUserData()
+        }
+
+      } catch (error) {
+        //catch这里是对await中异步操作出现异常的处理
+        this.$message({
+          message: "取消成功",
+          type: "info",
+          duration: 800,
+        })
+      }
+
+    },
+    //点击状态开关,发送请求修改状态
+    async stateChange(row){
+      const id = row.id
+      const mg_state = row.mg_state
+      //进行请求修改
+      let res = await axios.put(`http://localhost:8888/api/private/v1/users/${id}/state/${mg_state}`,null)
+      //console.log(res);
+      //请求发送成功后,判断返回状态码
+      if(res.data.meta.status === 200){
+        //删除成功,提示
+        this.$message({
+          message: "修改成功",
+          type: "success",
+          duration: 800,
+        })
+        //刷新页面
+        this.getUserData(this.currpage)
+      }
+    },
+    //点击编辑按钮(通过按钮将本条用户数据传递到函数,将其信息给编辑的表单显示),弹出用户信息对话框进行编辑
+    showEditUser(row){
+      console.log('aaa');
+      this.dialogEditUserVisible = true
+      const {username,email,mobile,id} = row
+      this.editUserForm.username = username
+      this.editUserForm.email = email
+      this.editUserForm.mobile = mobile
+      this.editUserForm.id = id
+    },
+    //编辑完成点击确定,发送修改信息到后端进行修改
+    async editUser(){
+      //从data中获取编辑表单的数据对象中需要的数据
+      const {mobile,email,id} = this.editUserForm
+      //发送请求
+      let res = await axios.put(`/users/${id}`,{mobile,email})
+      if(res.data.meta.status === 200){
+        this.dialogEditUserVisible = false
+        //提示
+        this.$message({
+          message:'编辑成功',
+          type:'success',
+          duration:800
+        })
+        //更新
+        this.getUserData(this.currpage)
+      }
+    },
+    closeDialogAddUser(){
+      this.$refs.addForm.resetFields()
     }
   },
-};
+}; 
