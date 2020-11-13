@@ -1,0 +1,58 @@
+<div>
+  <!-- 面包屑组件 -->
+  <el-breadcrumb class="bread" separator-class="el-icon-arrow-right">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+    <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+  </el-breadcrumb>
+  <!-- 搜索框组件,添加用户按钮,放在一行内分别的列中 -->
+  <el-row :gutter="50">
+    <el-col :span="8">
+      <el-input placeholder="请输入内容" v-model="searchUser">
+        <!-- 给搜索按钮绑定点击事件 -->
+        <el-button @click="queryUser" slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </el-col>
+    <el-col :span="8">
+      <el-button @click=showAddUser>添加用户</el-button>
+    </el-col>
+  </el-row>
+
+  <!-- 表格组件,下有三个列组件,日期,姓名.地址,记录行数由tableData中的数据数决定 -->
+  <el-table :data="tableData" stripe style="width: 100%">
+    <el-table-column prop="username" label="姓名" width="180">
+    </el-table-column>
+    <el-table-column prop="email" label="邮箱" width="180"> </el-table-column>
+    <el-table-column prop="mobile" label="电话"> </el-table-column>
+    <el-table-column prop="" label="状态"> </el-table-column>
+    <el-table-column prop="" label="操作"> </el-table-column>
+  </el-table>
+  <!-- 分页组件 -->
+  <!-- total表示数据总记录数,其绑定着data中的total,由请求获取.
+      page-szie表示分页时每页显示几条数据,和请求数据时一样的值.total和page-size可以决定生成几个分页盒子 
+      current-page表示当前页,由请求时的页码赋值得到,默认为1-->
+  <el-pagination @current-change="currentPageChange" background layout="prev, pager, next" :total="total" :page-size="2"
+    :current-page="currpage">
+  </el-pagination>
+  <!-- 添加用户对话框组件 -->
+  <el-dialog title="添加用户" :visible.sync="dialogAddUserVisible">
+    <el-form :rules="rules" :model="addUserForm" label-width="70px">
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="addUserForm.username"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="addUserForm.password"></el-input>
+      </el-form-item>
+      <el-form-item label="邮箱" prop="email">
+        <el-input v-model="addUserForm.email"></el-input>
+      </el-form-item>
+      <el-form-item label="手机" prop="mobile">
+        <el-input v-model="addUserForm.mobile"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogAddUserVisible = false">取 消</el-button>
+      <el-button type="primary" @click="addUser">确 定</el-button>
+    </div>
+  </el-dialog>
+</div>
