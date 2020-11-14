@@ -3,11 +3,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 //引入组件
-const Home = ()=>import('../components/home/Home')
-const Login = ()=>import('../components/login/Login')
+const Home = ()=>import('../components/home/Home.vue')
+const Login = ()=>import('../components/login/Login.vue')
 const User = ()=>import('../components/user/User.vue')
-const Roles = ()=>import('../components/roles/Roles')
-const Rights = ()=>import('../components/rights/Rights')
+const Roles = ()=>import('../components/roles/Roles.vue')
+const Rights = ()=>import('../components/rights/Rights.vue')
+const Category = ()=>import('../components/category/Category.vue')
 
 
 
@@ -25,7 +26,7 @@ const router = new VueRouter({
       component:Home,
       children:[
         {
-          path:'/user',
+          path:'/users',
           component:User
         },
         {
@@ -35,6 +36,10 @@ const router = new VueRouter({
         {
           path:'/rights',
           component:Rights
+        },
+        {
+          path:'/categories',
+          component:Category
         }
       ]
     },

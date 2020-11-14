@@ -12,26 +12,20 @@
     <el-container>
       <el-aside width="200px">
         <el-menu
-          default-active="2"
+          :default-active="currentPath()"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           :router='true'
         >
-          <el-submenu index="1">
+          <el-submenu :index="item1.id+''" v-for="item1 in menuData" :key="item1.id">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{item1.authName}}</span>
             </template>
-            <el-menu-item index="user">用户列表</el-menu-item>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="roles">角色列表</el-menu-item>
-            <el-menu-item index="rights">权限列表</el-menu-item>
+            <el-menu-item :index="item2.path" v-for="item2 in item1.children" :key="item2.id">
+              {{item2.authName}}
+            </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -43,8 +37,18 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "Home",
+  data(){
+    return {
+      menuData:[]
+    }
+  },
+  created(){
+    this.getLeftMenuData()
+  },
   methods: {
     //点击退出触发事件
     logout() {
@@ -76,6 +80,15 @@ export default {
           });
         });
     },
+    async getLeftMenuData(){
+      let res = await axios.get('menus')
+      //console.log(res);
+      this.menuData = res.data.data
+    },
+    currentPath(){
+      let path = this.$route.path
+      return path.slice(1)
+    }
   },
 };
 </script>

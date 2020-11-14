@@ -68,11 +68,25 @@ export default {
         email:'',
         mobile:'',
         id:0
-      }
+      },
+      //用于决定分配角色对话框是否显示
+      dialogAssignRoleVisible:false,
+      //分配角色
+      assignRoleForm:{
+        username:'大春哥',
+        //用户的id
+        id:'',
+        //角色的id
+        rid:''
+      },
+      allRolesData:[]
     };
   },
   created() {
+    //获取用户信息
     this.getUserData();
+    //获取所有角色的列表
+    this.getrolesData()
   },
   methods: {
     //向后端发送get请求,获取user数据
@@ -210,9 +224,46 @@ export default {
         this.getUserData(this.currpage)
       }
     },
+    //关闭添加用户对话框,后重置表单数据
     closeDialogAddUser(){
       this.$refs.addForm.resetFields()
+    },
+    //获取所有角色列表
+    async getrolesData(){
+      let res = await axios.get('roles')
+      console.log(res);
+      this.allRolesData = res.data.data
+    },
+    //点击分配角色,显示分配角色对话框
+    async showAssignRole(row){
+      this.dialogAssignRoleVisible = true
+      //取出row中的当前用户id和用户名
+      const {username,id} = row
+      this.assignRoleForm.username = username
+      this.assignRoleForm.id = id
+      //根据用户id再发送请求获取其的rid
+      let res = await axios.get(`users/${id}`)
+      //当用户没有分配角色时,其rid==-1,此时下拉框中找不到对应的角色名,
+      //所以需要对请求到的当前用户rid进行判断,如果是-1就把''给assignRoleForm.rid,反之就把返回的rid给这个变量
+      this.assignRoleForm.rid = res.data.data.rid == -1 ? '': res.data.data.rid
+    },
+    //设置分配角色成功,发送请求进行分配
+    async sendAssignRole(){
+      //从assignRoleForm中获取数据
+      const {id,rid} = this.assignRoleForm
+      let res = await axios.put(`users/${id}/role`,{
+        rid
+      })
+      //console.log(res);
+      if(res.data.meta.status === 200){
+        this.dialogAssignRoleVisible = false
+        this.$message({
+          message:'分配角色成功',
+          type:'success',
+          duration:800
+        })
+        this.getUserData(this.currpage)
+      }
     }
-    //nihao
   },
 }; 

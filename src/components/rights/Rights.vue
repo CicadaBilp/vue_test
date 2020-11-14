@@ -38,6 +38,7 @@ export default {
     //请求权限列表数据
     async getRightsData() {
       let res = await axios.get("rights/list");
+      console.log(res);
       this.rightsData = res.data.data;
     },
     indexMethod(index){

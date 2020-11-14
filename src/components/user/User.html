@@ -34,7 +34,7 @@
         <!-- plain表示镂空, -->
         <el-button @click='showEditUser(scope.row)' plain size="mini" type="primary" icon="el-icon-edit"></el-button>
         <el-button @click='delUser(scope.row)' plain size="mini" type="danger" icon="el-icon-delete"></el-button>
-        <el-button plain size="mini" type="success" icon="el-icon-check">分配角色</el-button>
+        <el-button @click='showAssignRole(scope.row)' plain size="mini" type="success" icon="el-icon-check">分配角色</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -45,7 +45,7 @@
   <el-pagination @current-change="currentPageChange" background layout="prev, pager, next" :total="total" :page-size="2"
     :current-page="currpage">
   </el-pagination>
-  <!-- 添加用户对话框组件 -->
+  <!-- 1. 添加用户对话框组件 -->
   <el-dialog @closed="closeDialogAddUser" title="添加用户" :visible.sync="dialogAddUserVisible">
     <el-form :rules="rules" :model="addUserForm" label-width="70px" ref="addForm">
       <el-form-item label="用户名" prop="username">
@@ -66,7 +66,7 @@
       <el-button type="primary" @click="addUser">确 定</el-button>
     </div>
   </el-dialog>
-  <!-- 编辑用户对话框组件 -->
+  <!-- 2. 编辑用户对话框组件 -->
   <el-dialog title="编辑用户" :visible.sync="dialogEditUserVisible">
     <el-form :model="editUserForm" label-width="70px">
       <el-form-item label="用户名">
@@ -83,6 +83,24 @@
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogEditUserVisible = false">取 消</el-button>
       <el-button type="primary" @click="editUser">确 定</el-button>
+    </div>
+  </el-dialog>
+  <!-- 3. 分配用户角色对话框组件 -->
+  <el-dialog title="分配角色" :visible.sync="dialogAssignRoleVisible">
+    <el-form :model="assignRoleForm" label-width="70px">
+      <el-form-item label="用户名" >
+        <el-tag >{{assignRoleForm.username}}</el-tag>
+      </el-form-item>
+      <el-form-item label="角色列表">
+        <!-- 选择的option会将其value给select的value即assignRoleForm.rid-->
+        <el-select v-model="assignRoleForm.rid" placeholder="请选择角色">
+          <el-option v-for="item in allRolesData" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogAssignRoleVisible = false">取 消</el-button>
+      <el-button type="primary" @click="sendAssignRole">确 定</el-button>
     </div>
   </el-dialog>
 </div>

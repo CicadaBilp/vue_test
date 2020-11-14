@@ -1,17 +1,54 @@
-
+<div>
   <el-table :data="rolesData" style="width: 100%">
+    <!-- 添加一列,展开列 -->
+    <el-table-column type="expand">
+      <!-- 这列的内容使用自定义组件根据返回的每条记录中的权限信息生成权限表格 -->
+      <template slot-scope="scope">
+        <el-row class="row1" v-for="item1 in scope.row.children" :key="item1.id">
+          <el-col :span="4">
+            <el-tag>{{item1.authName}}</el-tag>
+            <i class="el-icon-arrow-right"></i>
+          </el-col>
+          <el-col :span="20">
+            <el-row class="row2" v-for="item2 in item1.children" :key="item2.id">
+              <el-col :span="4">
+                <el-tag type="success">{{item2.authName}}</el-tag>
+                <i class="el-icon-arrow-right"></i>
+              </el-col>
+              <el-col :span="20">
+                <el-tag class="tag" type="warning" v-for="item3 in item2.children" :key="item3.id">{{ item3.authName }} </el-tag>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </template>
+    </el-table-column>
     <el-table-column type="index" :index="indexMethod"> </el-table-column>
     <el-table-column prop="roleName" label="角色名称" width="180">
     </el-table-column>
     <el-table-column prop="roleDesc" label="描述" width="180">
     </el-table-column>
-    <el-table-column  label="操作">
+    <el-table-column label="操作">
       <template slot-scope="scope">
         <!-- plain表示镂空, -->
         <el-button plain size="mini" type="primary" icon="el-icon-edit"></el-button>
         <el-button plain size="mini" type="danger" icon="el-icon-delete"></el-button>
-        <el-button plain size="mini" type="success" icon="el-icon-check">分配权限</el-button>
+        <el-button @click="setRights(scope.row)" plain size="mini" type="success" icon="el-icon-check">分配权限</el-button>
       </template>
     </el-table-column>
   </el-table>
- 
+  <!-- 分配权限对话框 -->
+  <el-dialog title="分配权限" :visible.sync="dialogRolesVisible">
+    <!-- 使用树组件,:default-checked-keys="[5]"表示默认勾选id为5的节点 
+    :default-expanded-keys="[2, 3]" 表示默认展开id为2和3的节点-->
+    <el-tree ref="tree" :data="AllRightsdata" show-checkbox node-key="id" 
+    :default-expand-all="true"
+    :props="defaultProps">
+    </el-tree>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogRolesVisible = false">取 消</el-button>
+      <el-button type="primary" @click="sendRights">确 定</el-button>
+    </div>
+  </el-dialog>
+</div>
