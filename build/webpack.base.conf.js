@@ -78,5 +78,12 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
+  },
+  //配置CDN引入的包
+  externals:{
+    //键:包名  值:包文件暴露出来的全局变量
+    vue:'Vue',
+    'vue-router':'VueRouter',
+    'element-ui':'ELEMENT'
   }
 }

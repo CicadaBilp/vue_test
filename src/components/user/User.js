@@ -32,7 +32,7 @@ export default {
           {
             min: 3,
             max: 5,
-            message: "用户名在 3 到 5 个字符之间",
+            message: "用户名在 2 到 6 个字符之间",
             trigger: "blur",
           },
         ],
@@ -42,7 +42,7 @@ export default {
           {
             min: 3,
             max: 6,
-            message: "密码在 3 到 6 个字符之间",
+            message: "密码在 5 到 10 个字符之间",
             trigger: "blur",
           },
         ],
@@ -83,8 +83,11 @@ export default {
     };
   },
   created() {
+    //从当前路由哈希值中获取保留的页数,然后获取该页用户数据显示()
+    //场景:当用户选中某页后刷新了页面,此时需要再次渲染用户之前浏览的页数据
+    let page = this.$route.params.page
     //获取用户信息
-    this.getUserData();
+    this.getUserData(page);
     //获取所有角色的列表
     this.getrolesData()
   },
@@ -113,6 +116,8 @@ export default {
     //组件中自带的事件,当前页改变时触发(即点击分页盒子),触发后发送请求获取此页数据
     //该事件会默认接收改变的当前页(用curr接收)
     currentPageChange(curr) {
+      //点击分页后,改变路由哈希值,后加当前页参数,用来保存当前浏览的页码数
+      this.$router.push('/users/'+curr)
       //调用getUserData方法传入当前页
       this.getUserData(curr, this.searchUser);
     },

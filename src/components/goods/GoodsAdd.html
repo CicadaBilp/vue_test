@@ -1,0 +1,62 @@
+<div>
+  <el-steps :active="active" finish-status="success">
+    <el-step title="第一步" description="基本信息"></el-step>
+    <el-step title="第二步" description="商品图片"></el-step>
+    <el-step title="第三步" description="商品内容"></el-step>
+  </el-steps>
+  <el-tabs @tab-click='clickTab' v-model="activeName" tab-position="left">
+    <!--1. 填写基本信息的表单 -->
+    <el-tab-pane name="one" label="基本信息">
+      <el-form :model="addGoodsForm" label-width="70px">
+        <el-form-item label="商品名称">
+          <el-input v-model="addGoodsForm.goods_name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品价格">
+          <el-input v-model="addGoodsForm.goods_price"></el-input>
+        </el-form-item>
+        <el-form-item label="商品质量">
+          <el-input v-model="addGoodsForm.goods_weight"></el-input>
+        </el-form-item>
+        <el-form-item label="商品数量">
+          <el-input v-model="addGoodsForm.goods_number"></el-input>
+        </el-form-item>
+        <el-form-item label="商品分类">
+          <!-- 设置props属性更改字段信息 -->
+          <el-cascader v-model="addGoodsForm.goods_cat" :props="defaultProps" :options="options" clearable>
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="是否促销">
+          <!-- 单选框组件,一组单选框双向绑定相同的变量,label表示每个框的值, -->
+          <el-radio v-model="addGoodsForm.radio" :label="true">是</el-radio>
+          <el-radio v-model="addGoodsForm.radio" :label="false">否</el-radio>
+        </el-form-item>
+      </el-form>
+      <el-button @click="next(2,'two')" type="primary">下一步</el-button>
+    </el-tab-pane>
+    <!-- 2. 上传图片 -->
+    <el-tab-pane name="two" label="商品图片">
+      <!-- 利用上传组价自带的action发送上传请求,还需要设置请求头token,还需要注册自带的上传成功的事件 -->
+      <el-upload action="http://localhost:8888/api/private/v1/upload" 
+      :headers="headers"
+      list-type="picture-card"
+      :on-preview="handlePictureCardPreview" 
+      :on-remove="handleRemove"
+      :on-success="upLoadSuccess">
+        <i class="el-icon-plus"></i>
+      </el-upload>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
+      <el-button @click="next(3,'three')" type="primary">下一步</el-button>
+    </el-tab-pane>
+    <el-tab-pane name="three" label="商品内容">
+      <quill-editor
+      class="father"
+      v-model="addGoodsForm.goods_introduce"
+      ref="myQuillEditor">
+
+      </quill-editor>
+      <el-button type="primary" @click="addGoods">确定</el-button>
+    </el-tab-pane>
+  </el-tabs>
+</div>

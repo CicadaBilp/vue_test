@@ -6,7 +6,7 @@ import App from './App'
 //引入element-ui插件
 import ElementUI from 'element-ui'
   //引入elementui的css样式模块
-import 'element-ui/lib/theme-chalk/index.css'
+//import 'element-ui/lib/theme-chalk/index.css'
 //引入公共样式
 import './assets/common.css'
 //引入axios

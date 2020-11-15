@@ -82,12 +82,14 @@ export default {
     },
     async getLeftMenuData(){
       let res = await axios.get('menus')
-      //console.log(res);
+      console.log(res);
       this.menuData = res.data.data
     },
     currentPath(){
       let path = this.$route.path
-      return path.slice(1)
+      console.log(path);
+      path = path.split('-')[0].slice(1)
+      return path
     }
   },
 };

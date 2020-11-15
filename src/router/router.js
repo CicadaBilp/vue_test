@@ -3,12 +3,15 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 //引入组件
+
+import Login from '../components/login/Login.vue'
 const Home = ()=>import('../components/home/Home.vue')
-const Login = ()=>import('../components/login/Login.vue')
 const User = ()=>import('../components/user/User.vue')
 const Roles = ()=>import('../components/roles/Roles.vue')
 const Rights = ()=>import('../components/rights/Rights.vue')
 const Category = ()=>import('../components/category/Category.vue')
+const Goods = ()=>import('../components/goods/Goods.vue')
+const GoodsAdd = ()=>import('../components/goods/GoodsAdd.vue')
 
 
 
@@ -26,7 +29,7 @@ const router = new VueRouter({
       component:Home,
       children:[
         {
-          path:'/users',
+          path:'/users/:page?',
           component:User
         },
         {
@@ -40,6 +43,14 @@ const router = new VueRouter({
         {
           path:'/categories',
           component:Category
+        },
+        {
+          path:'/goods',
+          component:Goods,
+        },
+        {
+          path:'/goods-add',
+          component:GoodsAdd,
         }
       ]
     },
